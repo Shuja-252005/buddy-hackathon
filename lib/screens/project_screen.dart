@@ -10,7 +10,7 @@ extension _BuddyProjectScreen on _BuddyHomeState {
           const _Mark(),
           const SizedBox(height: 16),
           const Text(
-            'Buddy.',
+            'Ahmed.',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
@@ -375,7 +375,7 @@ extension _BuddyProjectScreen on _BuddyHomeState {
           const _Mark(),
           const SizedBox(height: 30),
           const Text(
-            'Buddy.',
+            'Ahmed.',
             style: TextStyle(
               fontSize: 32,
               fontWeight: FontWeight.w600,

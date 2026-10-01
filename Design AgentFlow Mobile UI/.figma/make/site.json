@@ -1,0 +1,10 @@
+{
+  "description": "Streamline development by sending commands that AI splits into tasks for coding agents, delivering real-time progress and results in a sleek chat interface.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}

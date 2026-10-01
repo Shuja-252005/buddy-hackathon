@@ -1,12 +1,12 @@
 part of '../main.dart';
 
 extension _BuddyChatScreen on _BuddyHomeState {
-  Widget _chatScreen(double bottom) => Expanded(
+  Widget _chatScreen(double top, double bottom) => Expanded(
     child: Column(
       children: [
         Container(
-          height: 71,
-          padding: const EdgeInsets.symmetric(horizontal: 20),
+          height: 71 + top,
+          padding: EdgeInsets.fromLTRB(20, top, 20, 0),
           decoration: const BoxDecoration(
             border: Border(bottom: BorderSide(color: Color(0xFF22252A))),
           ),
@@ -26,7 +26,7 @@ extension _BuddyChatScreen on _BuddyHomeState {
                 onPressed: () => _update(() => _projects = true),
               ),
               const SizedBox(width: 8),
-              const Expanded(
+              Expanded(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -41,7 +41,7 @@ extension _BuddyChatScreen on _BuddyHomeState {
                     ),
                     SizedBox(height: 3),
                     Text(
-                      'WORKSPACE / PLAY_SLOT',
+                      'WORKSPACE / ${_selectedProject?.name.toUpperCase() ?? 'PROJECT'}',
                       style: TextStyle(
                         fontFamily: 'monospace',
                         fontSize: 10,
@@ -51,13 +51,22 @@ extension _BuddyChatScreen on _BuddyHomeState {
                   ],
                 ),
               ),
-              const Icon(Icons.circle, size: 6, color: Color(0xFF8793A3)),
+              Icon(
+                Icons.circle,
+                size: 6,
+                color: _serverConnected
+                    ? const Color(0xFF8793A3)
+                    : const Color(0xFFE08C86),
+              ),
               const SizedBox(width: 6),
               Tooltip(
                 message: 'Server: ${ApiConfig.serverBaseUrl}',
-                child: const Text(
-                  'Preview',
-                  style: TextStyle(fontSize: 11, color: Color(0xFFA8B2BE)),
+                child: Text(
+                  _serverConnected ? 'Connected' : 'Offline',
+                  style: const TextStyle(
+                    fontSize: 11,
+                    color: Color(0xFFA8B2BE),
+                  ),
                 ),
               ),
               const SizedBox(width: 8),
@@ -147,7 +156,7 @@ extension _BuddyChatScreen on _BuddyHomeState {
                         ),
                         ValueListenableBuilder<TextEditingValue>(
                           valueListenable: _input,
-                          builder: (_, value, __) => IconButton(
+                          builder: (_, value, _) => IconButton(
                             onPressed: value.text.trim().isEmpty ? null : _send,
                             style: IconButton.styleFrom(
                               backgroundColor: value.text.trim().isEmpty

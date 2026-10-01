@@ -5,10 +5,10 @@ const _panel = Color(0xFF181B20);
 const _blue = Color(0xFF82A6F6);
 const _muted = Color(0xFF858C97);
 
-void main() => runApp(const BuddyApp());
-
 class BuddyApp extends StatelessWidget {
-  const BuddyApp({super.key});
+  const BuddyApp({super.key, this.api});
+
+  final BuddyApi? api;
 
   @override
   Widget build(BuildContext context) => MaterialApp(
@@ -19,6 +19,6 @@ class BuddyApp extends StatelessWidget {
       colorScheme: const ColorScheme.dark(primary: _blue, surface: _bg),
       textSelectionTheme: const TextSelectionThemeData(cursorColor: _blue),
     ),
-    home: const BuddyHome(),
+    home: BuddyHome(api: api),
   );
 }

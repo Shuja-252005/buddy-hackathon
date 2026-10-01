@@ -11,19 +11,17 @@ class _AgentSheet extends StatelessWidget {
   final VoidCallback onStop;
   @override
   Widget build(BuildContext context) {
-    final lines = [
-      'Inspecting repository...',
-      task.id == 'admin'
-          ? 'Checking dashboard components...'
-          : 'Checking authentication...',
-      'Updating files...',
-      'Running flutter analyze...',
-      task.status == AgentStatus.completed
-          ? 'Tests passed.'
-          : task.status == AgentStatus.stopped
-          ? 'Agent stopped.'
-          : 'Running checks...',
-    ];
+    final outputLines = task.output.trim().isEmpty
+        ? [
+            switch (task.status) {
+              AgentStatus.queued => 'Waiting for Codex to start…',
+              AgentStatus.running => 'Codex is working…',
+              AgentStatus.completed => 'Agent completed with no output.',
+              AgentStatus.failed =>
+                'Agent failed${task.exitCode == null ? '' : ' (exit ${task.exitCode})'}.',
+            },
+          ]
+        : task.output.trim().split('\n').take(100).toList();
     return Positioned.fill(
       child: GestureDetector(
         onTap: onClose,
@@ -34,6 +32,7 @@ class _AgentSheet extends StatelessWidget {
             onTap: () {},
             child: Container(
               width: double.infinity,
+              height: MediaQuery.sizeOf(context).height * .9,
               padding: EdgeInsets.fromLTRB(
                 24,
                 12,
@@ -55,7 +54,7 @@ class _AgentSheet extends StatelessWidget {
               child: SafeArea(
                 top: false,
                 child: Column(
-                  mainAxisSize: MainAxisSize.min,
+                  mainAxisSize: MainAxisSize.max,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Center(
@@ -91,7 +90,7 @@ class _AgentSheet extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                task.name,
+                                task.worktree,
                                 style: const TextStyle(
                                   fontSize: 17,
                                   fontWeight: FontWeight.w600,
@@ -122,115 +121,101 @@ class _AgentSheet extends StatelessWidget {
                     const SizedBox(height: 25),
                     _meta('Worktree:', task.worktree),
                     const SizedBox(height: 10),
-                    _meta('Branch:', task.name),
+                    _meta('Task:', task.title),
                     const SizedBox(height: 23),
-                    Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF101215),
-                        border: Border.all(color: const Color(0xFF30343B)),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Column(
-                        children: [
-                          Container(
-                            height: 36,
-                            padding: const EdgeInsets.symmetric(horizontal: 14),
-                            decoration: const BoxDecoration(
-                              border: Border(
-                                bottom: BorderSide(color: Color(0xFF292D33)),
+                    Expanded(
+                      child: Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF101215),
+                          border: Border.all(color: const Color(0xFF30343B)),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Column(
+                          children: [
+                            Container(
+                              height: 36,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 14,
+                              ),
+                              decoration: const BoxDecoration(
+                                border: Border(
+                                  bottom: BorderSide(color: Color(0xFF292D33)),
+                                ),
+                              ),
+                              child: Row(
+                                children: [
+                                  for (var i = 0; i < 3; i++)
+                                    Container(
+                                      width: 6,
+                                      height: 6,
+                                      margin: const EdgeInsets.only(right: 6),
+                                      decoration: const BoxDecoration(
+                                        color: Color(0xFF525960),
+                                        shape: BoxShape.circle,
+                                      ),
+                                    ),
+                                  const Spacer(),
+                                  const Text(
+                                    'agent output',
+                                    style: TextStyle(
+                                      fontFamily: 'monospace',
+                                      fontSize: 10,
+                                      color: Color(0xFF737A86),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                            child: Row(
-                              children: [
-                                for (var i = 0; i < 3; i++)
-                                  Container(
-                                    width: 6,
-                                    height: 6,
-                                    margin: const EdgeInsets.only(right: 6),
-                                    decoration: const BoxDecoration(
-                                      color: Color(0xFF525960),
-                                      shape: BoxShape.circle,
-                                    ),
-                                  ),
-                                const Spacer(),
-                                const Text(
-                                  'agent output',
-                                  style: TextStyle(
-                                    fontFamily: 'monospace',
-                                    fontSize: 10,
-                                    color: Color(0xFF737A86),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(15),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                for (var i = 0; i < lines.length; i++)
-                                  Padding(
-                                    padding: const EdgeInsets.only(bottom: 8),
-                                    child: Row(
-                                      children: [
-                                        Text(
-                                          '${i + 1}'.padLeft(2, '0'),
-                                          style: const TextStyle(
-                                            fontFamily: 'monospace',
-                                            fontSize: 11,
-                                            color: Color(0xFF4E617A),
-                                          ),
+                            Expanded(
+                              child: SingleChildScrollView(
+                                padding: const EdgeInsets.all(15),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    for (var i = 0; i < outputLines.length; i++)
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                          bottom: 8,
                                         ),
-                                        const SizedBox(width: 13),
-                                        Expanded(
-                                          child: Text(
-                                            lines[i],
-                                            style: TextStyle(
-                                              fontFamily: 'monospace',
-                                              fontSize: 11,
-                                              color:
-                                                  i == lines.length - 1 &&
+                                        child: Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              '${i + 1}'.padLeft(2, '0'),
+                                              style: const TextStyle(
+                                                fontFamily: 'monospace',
+                                                fontSize: 11,
+                                                color: Color(0xFF4E617A),
+                                              ),
+                                            ),
+                                            const SizedBox(width: 13),
+                                            Expanded(
+                                              child: Text(
+                                                outputLines[i],
+                                                style: TextStyle(
+                                                  fontFamily: 'monospace',
+                                                  fontSize: 11,
+                                                  color:
                                                       task.status ==
                                                           AgentStatus.completed
-                                                  ? const Color(0xFF8FACF2)
-                                                  : const Color(0xFFAAB2BF),
+                                                      ? const Color(0xFF8FACF2)
+                                                      : const Color(0xFFAAB2BF),
+                                                ),
+                                              ),
                                             ),
-                                          ),
+                                          ],
                                         ),
-                                      ],
-                                    ),
-                                  ),
-                              ],
+                                      ),
+                                  ],
+                                ),
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    if (task.status == AgentStatus.working) ...[
-                      const SizedBox(height: 22),
-                      SizedBox(
-                        width: double.infinity,
-                        height: 44,
-                        child: OutlinedButton.icon(
-                          onPressed: onStop,
-                          icon: const Icon(Icons.stop, size: 15),
-                          label: const Text(
-                            'Stop Agent',
-                            style: TextStyle(fontSize: 13),
-                          ),
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: const Color(0xFFE3E5E8),
-                            backgroundColor: const Color(0xFF252930),
-                            side: const BorderSide(color: Color(0xFF3C4149)),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(11),
-                            ),
-                          ),
+                          ],
                         ),
                       ),
-                    ],
+                    ),
                   ],
                 ),
               ),

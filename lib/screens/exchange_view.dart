@@ -6,21 +6,6 @@ extension _BuddyExchangeView on _BuddyHomeState {
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (index == 0)
-          const Center(
-            child: Padding(
-              padding: EdgeInsets.only(bottom: 24),
-              child: Text(
-                'TODAY  ·  09:41',
-                style: TextStyle(
-                  fontFamily: 'monospace',
-                  fontSize: 10,
-                  letterSpacing: 1.1,
-                  color: Color(0xFF666E79),
-                ),
-              ),
-            ),
-          ),
         Align(
           alignment: Alignment.centerRight,
           child: Container(
@@ -110,7 +95,9 @@ extension _BuddyExchangeView on _BuddyHomeState {
               Row(
                 children: [
                   Text(
-                    'DELEGATED TO ${exchange.tasks.length} ${exchange.tasks.length == 1 ? 'AGENT' : 'AGENTS'}',
+                    exchange.isPlanning
+                        ? 'PLANNING AGENT TASKS'
+                        : 'DELEGATED TO ${exchange.tasks.length} ${exchange.tasks.length == 1 ? 'AGENT' : 'AGENTS'}',
                     style: const TextStyle(
                       fontFamily: 'monospace',
                       fontSize: 10,
@@ -129,12 +116,18 @@ extension _BuddyExchangeView on _BuddyHomeState {
                   child: _taskCard(task),
                 ),
               for (final task in exchange.tasks.where(
-                (t) => t.status != AgentStatus.working,
+                (t) =>
+                    t.status == AgentStatus.completed ||
+                    t.status == AgentStatus.failed,
               ))
                 _taskResult(task),
               for (final task
                   in exchange.tasks
-                      .where((t) => t.status == AgentStatus.working)
+                      .where(
+                        (t) =>
+                            t.status == AgentStatus.running ||
+                            t.status == AgentStatus.queued,
+                      )
                       .take(1))
                 _workingLine(task),
             ],
@@ -183,7 +176,7 @@ extension _BuddyExchangeView on _BuddyHomeState {
                       children: [
                         Expanded(
                           child: Text(
-                            task.name,
+                            task.title,
                             style: const TextStyle(
                               fontSize: 13,
                               fontWeight: FontWeight.w600,
@@ -200,7 +193,7 @@ extension _BuddyExchangeView on _BuddyHomeState {
                     ),
                     const SizedBox(height: 3),
                     Text(
-                      task.name,
+                      task.worktree,
                       style: const TextStyle(
                         fontFamily: 'monospace',
                         fontSize: 10,
@@ -236,15 +229,17 @@ extension _BuddyExchangeView on _BuddyHomeState {
   );
 
   Widget _status(AgentStatus status) {
-    final color = status == AgentStatus.working
+    final color = status == AgentStatus.running
         ? _blue
         : status == AgentStatus.completed
         ? const Color(0xFFA6B9D9)
+        : status == AgentStatus.failed
+        ? const Color(0xFFE08C86)
         : const Color(0xFF8A8D96);
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        if (status == AgentStatus.working)
+        if (status == AgentStatus.running)
           Container(
             width: 5,
             height: 5,
@@ -256,19 +251,16 @@ extension _BuddyExchangeView on _BuddyHomeState {
           )
         else
           Icon(
-            status == AgentStatus.completed ? Icons.check : Icons.stop,
+            status == AgentStatus.completed
+                ? Icons.check
+                : status == AgentStatus.failed
+                ? Icons.error_outline
+                : Icons.schedule,
             size: 12,
             color: color,
           ),
         const SizedBox(width: 5),
-        Text(
-          status == AgentStatus.working
-              ? 'Working'
-              : status == AgentStatus.completed
-              ? 'Completed'
-              : 'Stopped',
-          style: TextStyle(fontSize: 11, color: color),
-        ),
+        Text(status.label, style: TextStyle(fontSize: 11, color: color)),
       ],
     );
   }
@@ -283,7 +275,7 @@ extension _BuddyExchangeView on _BuddyHomeState {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          task.name,
+          task.worktree,
           style: const TextStyle(
             fontSize: 11,
             fontWeight: FontWeight.w600,
@@ -303,11 +295,9 @@ extension _BuddyExchangeView on _BuddyHomeState {
             ),
             const SizedBox(width: 8),
             Text(
-              task.step == 0
-                  ? (task.id == 'admin'
-                        ? 'Updating components...'
-                        : 'Inspecting authentication...')
-                  : 'Running tests...',
+              task.status == AgentStatus.queued
+                  ? 'Waiting for agent…'
+                  : 'Agent is working…',
               style: const TextStyle(
                 fontFamily: 'monospace',
                 fontSize: 10,
@@ -332,7 +322,7 @@ extension _BuddyExchangeView on _BuddyHomeState {
         Row(
           children: [
             Text(
-              task.name,
+              task.worktree,
               style: const TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.w600,
@@ -345,7 +335,11 @@ extension _BuddyExchangeView on _BuddyHomeState {
         ),
         const SizedBox(height: 5),
         Text(
-          task.status == AgentStatus.stopped ? 'Agent stopped.' : task.result,
+          task.output.isEmpty
+              ? (task.status == AgentStatus.failed
+                    ? 'Agent failed${task.exitCode == null ? '' : ' (exit ${task.exitCode})'}.'
+                    : 'Agent completed with no output.')
+              : _conciseOutput(task.output),
           style: const TextStyle(
             fontSize: 12,
             height: 1.6,
@@ -355,4 +349,9 @@ extension _BuddyExchangeView on _BuddyHomeState {
       ],
     ),
   );
+
+  String _conciseOutput(String output) {
+    final cleaned = output.trim();
+    return cleaned.length > 260 ? '${cleaned.substring(0, 260)}…' : cleaned;
+  }
 }

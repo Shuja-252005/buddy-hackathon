@@ -29,7 +29,7 @@ cd server
 BUDDY_OLLAMA_MODEL=gemma4:e4b .venv/bin/uvicorn server:app --host 0.0.0.0 --port 8000
 ```
 
-The Flutter server URL has one configuration point in `lib/config/api_config.dart`; pass a Mac LAN URL at app launch with `--dart-define=BUDDY_SERVER_URL=http://<mac-lan-ip>:8000`.
+The Flutter server URL is configurable with `--dart-define=BUDDY_SERVER_URL=http://<mac-lan-ip>:8000`. The Android emulator defaults to `http://10.0.2.2:8000`; for a physical phone, use the Mac's Wi-Fi/LAN IP, for example `flutter run --dart-define=BUDDY_SERVER_URL=http://192.168.1.20:8000`.
 
 Project worktrees are configured together at the top of `server/server.py`. Defaults point to the existing local PlaySlot worktrees. `BUDDY_PLAY_SLOT_ROOT`, `BUDDY_PLAY_SLOT_AGENT_ADMIN_WORKTREE`, `BUDDY_PLAY_SLOT_AGENT_BUGS_WORKTREE`, and `BUDDY_PLAY_SLOT_AGENT_IOS_WORKTREE` can override those locations.
 

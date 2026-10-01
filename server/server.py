@@ -29,6 +29,12 @@ _PLAY_SLOT_ROOT = Path(
         str(Path.home() / "Documents/Shuja/Flutter Projects"),
     )
 ).expanduser()
+_BUDDY_WORKTREE = Path(
+    os.getenv(
+        "BUDDY_BUDDY_WORKTREE",
+        str(Path(__file__).resolve().parent.parent),
+    )
+).expanduser()
 PROJECTS: dict[str, dict[str, dict[str, Path]]] = {
     "PlaySlot": {
         "worktrees": {
@@ -51,7 +57,13 @@ PROJECTS: dict[str, dict[str, dict[str, Path]]] = {
                 )
             ).expanduser(),
         }
-    }
+    },
+    "Buddy": {
+        "worktrees": {
+            # Use this checkout so Flutter hot reload can show agent changes.
+            "agent-buddy": _BUDDY_WORKTREE,
+        }
+    },
 }
 
 OLLAMA_URL = os.getenv("BUDDY_OLLAMA_URL", "http://127.0.0.1:11434").rstrip("/")

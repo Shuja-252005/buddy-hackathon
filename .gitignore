@@ -47,6 +47,13 @@ app.*.map.json
 # Widget Preview related
 .widget_preview/
 
+# Python controller
+__pycache__/
+*.py[cod]
+server/.venv/
+.venv/
+.pytest_cache/
+
 # Reference UI build artifacts
 Design AgentFlow Mobile UI/node_modules/
 Design AgentFlow Mobile UI/dist/

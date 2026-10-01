@@ -1,6 +1,6 @@
 # Buddy
 
-Buddy is a Flutter mobile command center for delegating development work to AI agents. It follows the supplied AgentFlow design, with PlaySlot as the sample project. The Python controller in `server/` uses the local Ollama model as its planner and Codex CLI for isolated worktree agents.
+Buddy is a Flutter mobile command center for delegating development work to AI agents. It uses the Buddy mobile design, with PlaySlot as the sample project. The Python controller in `server/` uses the local Ollama model as its planner and Codex CLI for isolated worktree agents.
 
 ## Run locally
 
@@ -44,3 +44,7 @@ Ollama defaults to `http://127.0.0.1:11434` and model `gemma4:e4b`; configure th
 ## Git workflow
 
 The default branch is `main`. Create a feature branch for changes and open a pull request before merging. Commit messages should describe the change, for example `Build Buddy agent flow interface`.
+
+## License
+
+Buddy is licensed under the MIT License. See [LICENSE](LICENSE) for details.

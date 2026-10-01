@@ -241,11 +241,10 @@ class _BuddyHomeState extends State<BuddyHome> {
                     if (!_authenticated)
                       _authScreen(safe.top, safe.bottom)
                     else ...[
-                      _StatusBar(top: safe.top),
                       if (_projects)
                         _projectScreen(safe.bottom)
                       else
-                        _chatScreen(0, safe.bottom),
+                        _chatScreen(safe.top, safe.bottom),
                     ],
                   ],
                 ),

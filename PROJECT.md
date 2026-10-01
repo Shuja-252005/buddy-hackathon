@@ -1,8 +1,8 @@
-# AgentFlow — Project Specification
+# Buddy — Project Specification
 
-## What is AgentFlow?
+## What is Buddy?
 
-AgentFlow is a mobile AI command center for developers.
+Buddy is a mobile AI command center for developers.
 
 The developer uses a Flutter mobile app to chat with an AI development team.
 
@@ -144,12 +144,12 @@ The Flutter application should communicate with the Mac using HTTP.
 
 # Repository Structure
 
-Everything related to AgentFlow must remain inside one GitHub repository.
+Everything related to Buddy must remain inside one GitHub repository.
 
 The repository should have a simple structure similar to:
 
 ```text
-AgentFlow/
+Buddy/
 │
 ├── lib/                    # Flutter application
 ├── android/
@@ -173,7 +173,7 @@ The Python controller lives inside `server/`.
 
 Do not create a separate Git repository for the Python server.
 
-The external Git worktrees that AgentFlow controls are separate projects/directories on the Mac. They do not need to be inside this repository.
+The external Git worktrees that Buddy controls are separate projects/directories on the Mac. They do not need to be inside this repository.
 
 ---
 
@@ -392,7 +392,7 @@ WebSockets are optional and should not delay the basic implementation.
 
 # Example End-to-End Flow
 
-The developer opens AgentFlow.
+The developer opens Buddy.
 
 They select:
 
@@ -546,7 +546,7 @@ If working on the AI planner, keep the planner interface clean so the backend ca
 
 # Definition of Done
 
-AgentFlow is successful when the following demonstration works:
+Buddy is successful when the following demonstration works:
 
 1. Open the Flutter app.
 2. Connect to the Mac.

@@ -146,13 +146,27 @@ extension _BuddyChatScreen on _BuddyHomeState {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        IconButton(
-                          onPressed: () {},
-                          icon: const Icon(
-                            Icons.add,
-                            size: 21,
-                            color: Color(0xFF9BA3AF),
-                          ),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              tooltip: 'Attach image',
+                              onPressed: () {},
+                              icon: const Icon(
+                                Icons.image_outlined,
+                                size: 19,
+                                color: Color(0xFF9BA3AF),
+                              ),
+                            ),
+                            IconButton(
+                              onPressed: () {},
+                              icon: const Icon(
+                                Icons.add,
+                                size: 21,
+                                color: Color(0xFF9BA3AF),
+                              ),
+                            ),
+                          ],
                         ),
                         ValueListenableBuilder<TextEditingValue>(
                           valueListenable: _input,

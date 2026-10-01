@@ -1031,12 +1031,42 @@ class _Mark extends StatelessWidget {
       border: Border.all(color: const Color(0xFF353E50)),
       borderRadius: BorderRadius.circular(11),
     ),
-    child: Icon(
-      Icons.people_alt_outlined,
-      size: small ? 17 : 23,
-      color: const Color(0xFF8FB1FF),
+    child: CustomPaint(
+      size: Size(small ? 17 : 23, small ? 17 : 23),
+      painter: _BuddyMarkPainter(),
     ),
   );
+}
+
+class _BuddyMarkPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final scale = size.width / 24;
+    final paint = Paint()
+      ..color = const Color(0xFF8FB1FF)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.8
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round;
+    final mark = Path()
+      ..moveTo(5, 17.5)
+      ..lineTo(12, 5)
+      ..lineTo(19, 17.5)
+      ..moveTo(8, 13.5)
+      ..lineTo(16, 13.5);
+    canvas.save();
+    canvas.scale(scale);
+    canvas.drawPath(mark, paint);
+    canvas.drawCircle(
+      const Offset(19, 17.5),
+      1.8,
+      Paint()..color = const Color(0xFF8FB1FF),
+    );
+    canvas.restore();
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
 class _AgentSheet extends StatelessWidget {

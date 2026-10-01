@@ -1,6 +1,6 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
+
+import 'config/api_config.dart';
 
 const _bg = Color(0xFF0E1013);
 const _panel = Color(0xFF181B20);
@@ -66,13 +66,12 @@ class BuddyHome extends StatefulWidget {
 }
 
 class _BuddyHomeState extends State<BuddyHome> {
-  bool _projects = false;
+  bool _projects = true;
   final _input = TextEditingController();
   final _scroll = ScrollController();
   final List<Exchange> _exchanges = [];
   AgentTask? _selected;
   int _nextId = 2;
-  Timer? _timer;
 
   @override
   void initState() {
@@ -87,43 +86,23 @@ class _BuddyHomeState extends State<BuddyHome> {
             id: 'bugs',
             name: 'agent-bugs',
             title: 'Fix login / authentication issue',
-            worktree: 'buddy_bugfix',
+            worktree: 'play_slot_bugfix',
             result: 'Login issue fixed and tests passed.',
           ),
           AgentTask(
             id: 'admin',
             name: 'agent-admin',
             title: 'Update admin dashboard',
-            worktree: 'buddy_admin',
+            worktree: 'play_slot_admin',
             result: 'Admin dashboard updated.',
           ),
         ],
       ),
     );
-    _timer = Timer.periodic(const Duration(seconds: 7), (_) {
-      if (!mounted) return;
-      setState(() {
-        for (final exchange in _exchanges) {
-          final task = exchange.tasks
-              .where((t) => t.status == AgentStatus.working)
-              .firstOrNull;
-          if (task != null) {
-            if (task.step >= 1) {
-              task.step = 2;
-              task.status = AgentStatus.completed;
-            } else {
-              task.step = 1;
-            }
-            break;
-          }
-        }
-      });
-    });
   }
 
   @override
   void dispose() {
-    _timer?.cancel();
     _input.dispose();
     _scroll.dispose();
     super.dispose();
@@ -156,10 +135,10 @@ class _BuddyHomeState extends State<BuddyHome> {
                   ? 'Investigate and fix issue'
                   : 'Implement requested changes',
               worktree: isTest
-                  ? 'buddy_tests'
+                  ? 'play_slot_tests'
                   : isBug
-                  ? 'buddy_bugfix'
-                  : 'buddy_feature',
+                  ? 'play_slot_bugfix'
+                  : 'play_slot_feature',
               result: isTest
                   ? 'Tests completed successfully.'
                   : isBug
@@ -294,7 +273,7 @@ class _BuddyHomeState extends State<BuddyHome> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: const Text(
-                          'B.',
+                          'P.',
                           style: TextStyle(
                             fontFamily: 'monospace',
                             fontSize: 17,
@@ -309,8 +288,8 @@ class _BuddyHomeState extends State<BuddyHome> {
                           vertical: 6,
                         ),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF202820),
-                          border: Border.all(color: const Color(0xFF354235)),
+                          color: const Color(0xFF20242A),
+                          border: Border.all(color: const Color(0xFF353B45)),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: const Row(
@@ -318,14 +297,14 @@ class _BuddyHomeState extends State<BuddyHome> {
                             Icon(
                               Icons.circle,
                               size: 6,
-                              color: Color(0xFF8CBA90),
+                              color: Color(0xFF8793A3),
                             ),
                             SizedBox(width: 6),
                             Text(
-                              'Mac Connected',
+                              'Preview mode',
                               style: TextStyle(
                                 fontSize: 10,
-                                color: Color(0xFFA2C9A5),
+                                color: Color(0xFF9CA5B3),
                               ),
                             ),
                           ],
@@ -335,7 +314,7 @@ class _BuddyHomeState extends State<BuddyHome> {
                   ),
                   const SizedBox(height: 26),
                   const Text(
-                    'Buddy',
+                    'PlaySlot',
                     style: TextStyle(
                       fontSize: 21,
                       fontWeight: FontWeight.w600,
@@ -433,7 +412,7 @@ class _BuddyHomeState extends State<BuddyHome> {
                     ),
                     SizedBox(height: 3),
                     Text(
-                      'WORKSPACE / BUDDY',
+                      'WORKSPACE / PLAY_SLOT',
                       style: TextStyle(
                         fontFamily: 'monospace',
                         fontSize: 10,
@@ -443,11 +422,14 @@ class _BuddyHomeState extends State<BuddyHome> {
                   ],
                 ),
               ),
-              const Icon(Icons.circle, size: 6, color: Color(0xFF83C397)),
+              const Icon(Icons.circle, size: 6, color: Color(0xFF8793A3)),
               const SizedBox(width: 6),
-              const Text(
-                'Connected',
-                style: TextStyle(fontSize: 11, color: Color(0xFFA8B2BE)),
+              Tooltip(
+                message: 'Server: ${ApiConfig.serverBaseUrl}',
+                child: const Text(
+                  'Preview',
+                  style: TextStyle(fontSize: 11, color: Color(0xFFA8B2BE)),
+                ),
               ),
               const SizedBox(width: 8),
               IconButton(

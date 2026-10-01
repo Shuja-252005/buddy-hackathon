@@ -1,11 +1,11 @@
 {
-    "name": "buddy",
-    "short_name": "buddy",
+    "name": "Buddy",
+    "short_name": "Buddy",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#0E1013",
+    "theme_color": "#0E1013",
+    "description": "Buddy, a mobile command center for AI coding agents.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
